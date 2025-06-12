@@ -1,13 +1,15 @@
--- GrowHub V3 PRO Loader by SproutX
+-- GrowHub V3 PRO+ Loader by SproutX 🚀
 
-local version = "3.0"
+local localVersion = "3.0"
 local repo = "SproutX-Scripter/GrowAGardenScrpter"
 local mainScript = "GrowAGardenMain.lua"
+local versionFile = "version.txt"
 
 -- UI Loading Screen
-local function loadingScreen()
+local function loadingScreen(statusText)
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Parent = game.CoreGui
+    ScreenGui.Name = "GrowHubLoading"
 
     local Frame = Instance.new("Frame")
     Frame.Size = UDim2.new(0, 400, 0, 200)
@@ -17,27 +19,43 @@ local function loadingScreen()
     Frame.Parent = ScreenGui
 
     local Title = Instance.new("TextLabel")
-    Title.Text = "🌿 GrowHub V3 PRO"
+    Title.Text = "🌿 GrowHub V3 PRO+"
     Title.Font = Enum.Font.GothamBold
     Title.TextColor3 = Color3.fromRGB(0, 255, 128)
     Title.TextSize = 30
     Title.Size = UDim2.new(1, 0, 0, 50)
     Title.Parent = Frame
 
-    local Loading = Instance.new("TextLabel")
-    Loading.Text = "Loading, please wait..."
-    Loading.Font = Enum.Font.Gotham
-    Loading.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Loading.TextSize = 20
-    Loading.Position = UDim2.new(0, 0, 0, 100)
-    Loading.Size = UDim2.new(1, 0, 0, 50)
-    Loading.Parent = Frame
+    local Subtitle = Instance.new("TextLabel")
+    Subtitle.Text = statusText
+    Subtitle.Font = Enum.Font.Gotham
+    Subtitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Subtitle.TextSize = 20
+    Subtitle.Position = UDim2.new(0, 0, 0, 100)
+    Subtitle.Size = UDim2.new(1, 0, 0, 50)
+    Subtitle.Parent = Frame
 
-    wait(2)
-    ScreenGui:Destroy()
+    return ScreenGui, Subtitle
 end
 
-loadingScreen()
+-- Show initial loading
+local gui, subtitle = loadingScreen("Checking for Updates...")
+
+-- Version check
+local function checkVersion()
+    local url = "https://raw.githubusercontent.com/"..repo.."/main/"..versionFile
+    local remoteVersion = game:HttpGet(url)
+    if remoteVersion and remoteVersion ~= localVersion then
+        subtitle.Text = "New Update Available!"
+        wait(2)
+    else
+        subtitle.Text = "Up to Date!"
+        wait(1)
+    end
+end
+
+checkVersion()
+gui:Destroy()
 
 -- Load the Main Script
 local success, result = pcall(function()
